@@ -3,7 +3,10 @@ from .vocabularies import TEXT_IDX
 from Products.CMFPlone.utils import getFSVersionTuple
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from plone.app.contenttypes.behaviors.collection import ISyndicatableCollection
+try:
+    from plone.app.contenttypes.behaviors.collection import ISyndicatableCollection
+except ImportError:
+    from plone.app.collection.interfaces import ICollection as ISyndicatableCollection
 from plone.app.portlets.portlets import base
 from plone.app.uuid.utils import uuidToCatalogBrain
 from plone.app.vocabularies.catalog import CatalogSource

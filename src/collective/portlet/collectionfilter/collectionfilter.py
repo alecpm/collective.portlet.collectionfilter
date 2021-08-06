@@ -7,11 +7,13 @@ from Acquisition import aq_inner
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import getFSVersionTuple
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from plone.app.contenttypes.behaviors.collection import ISyndicatableCollection
+try:
+    from plone.app.contenttypes.behaviors.collection import ISyndicatableCollection
+except ImportError:
+    from plone.app.collection.interfaces import ICollection as ISyndicatableCollection
 from plone.app.event.base import _prepare_range
 from plone.app.event.base import guess_date_from
 from plone.app.event.base import start_end_from_mode
-from plone.app.event.base import start_end_query
 from plone.app.portlets.portlets import base
 from plone.app.uuid.utils import uuidToObject
 from plone.app.vocabularies.catalog import CatalogSource
@@ -38,6 +40,18 @@ else:
     from plone.app.portlets.browser.z3cformhelper import AddForm as base_AddForm  # noqa
     from plone.app.portlets.browser.z3cformhelper import EditForm as base_EditForm  # noqa
     from z3c.form import field
+
+
+def start_end_query(start, end):
+    """Make a catalog query out of start and end dates.
+    """
+    query = {}
+    if start:
+        query['end'] = {'query': start, 'range': 'min'}
+    if end:
+        query['start'] = {'query': end, 'range': 'max'}
+    return query
+
 
 
 class ICollectionFilterPortlet(IPortletDataProvider):
@@ -276,6 +290,8 @@ class Renderer(base.Renderer):
                     if not getattr(val, '__iter__', False):
                         val = [val]
                     for crit in val:
+                        if crit is None:
+                            continue
                         if crit not in grouped_results:
                             urlquery[idx] = crit
                             title = _(safe_decode(
