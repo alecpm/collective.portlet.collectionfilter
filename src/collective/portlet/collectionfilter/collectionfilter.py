@@ -4,6 +4,7 @@ from .utils import safe_encode
 from .vocabularies import EMPTY_MARKER
 from .vocabularies import GROUPBY_CRITERIA
 from Acquisition import aq_inner
+import Missing
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import getFSVersionTuple
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -270,7 +271,7 @@ class Renderer(base.Renderer):
             if results:
 
                 ret.append(dict(
-                    title=_('subject_all', default=u'All categories'),
+                    title=_('subject_all', default=u'All'),
                     url=u'{0}/?{1}'.format(
                         self.collection.absolute_url(),
                         urlencode(urlquery)
@@ -290,15 +291,15 @@ class Renderer(base.Renderer):
                     if not getattr(val, '__iter__', False):
                         val = [val]
                     for crit in val:
-                        if crit is None:
+                        if crit is None or crit is Missing.Value:
                             continue
                         if crit not in grouped_results:
                             urlquery[idx] = crit
-                            title = _(safe_decode(
-                                mod(crit)
-                                if mod and crit is not EMPTY_MARKER
-                                else crit
-                            ))  # mod modifies for displaying (e.g. uuid to title)  # noqa
+                            # mod modifies for displaying (e.g. uuid to title)
+                            title = mod(crit) if mod and crit is not EMPTY_MARKER else crit # noqa
+                            if title is None:
+                                continue
+                            title = _(safe_decode(title))
                             url = u'{0}/?{1}'.format(
                                 self.collection.absolute_url(),
                                 urlencode(safe_encode(urlquery))  # need to be utf-8 encoded  # noqa

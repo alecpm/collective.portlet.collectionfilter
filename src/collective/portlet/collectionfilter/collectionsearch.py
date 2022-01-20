@@ -118,6 +118,8 @@ class Renderer(CollectionRenderer):
             self._collection = item = uuidToCatalogBrain(
                 self.data.target_collection
             )
+        else:
+            item = item.aq_inner
         return item
 
     def update(self):
