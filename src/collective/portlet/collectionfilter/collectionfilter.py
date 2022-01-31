@@ -211,7 +211,9 @@ class Renderer(base.Renderer):
 
     @property
     def available(self):
-        return bool(self.collection)
+        if not bool(self.collection):
+            return False
+        return len(self._results(self.collection, self.request.form or {})) > 1
 
     def header_title(self):
         if self.data.header:
@@ -291,12 +293,12 @@ class Renderer(base.Renderer):
                     if not getattr(val, '__iter__', False):
                         val = [val]
                     for crit in val:
-                        if crit is None or crit is Missing.Value:
+                        if crit is None or crit is Missing.Value or crit == EMPTY_MARKER:
                             continue
                         if crit not in grouped_results:
                             urlquery[idx] = crit
                             # mod modifies for displaying (e.g. uuid to title)
-                            title = mod(crit) if mod and crit is not EMPTY_MARKER else crit # noqa
+                            title = mod(crit) if mod else crit # noqa
                             if title is None:
                                 continue
                             title = _(safe_decode(title))
