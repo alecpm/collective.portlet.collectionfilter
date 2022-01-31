@@ -11,7 +11,7 @@ EMPTY_MARKER = '__EMPTY__'
 TEXT_IDX = "SearchableText"
 
 GROUPBY_CRITERIA = {
-    'Subject': {
+    'Tags': {
         'index': 'Subject',  # For querying
         'metadata': 'Subject',  # For constructing the list
         'display_modifier': None,  # For modifying list items (e.g. dates)

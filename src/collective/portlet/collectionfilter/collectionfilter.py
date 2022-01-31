@@ -213,7 +213,7 @@ class Renderer(base.Renderer):
     def available(self):
         if not bool(self.collection):
             return False
-        return len(self._results(self.collection, self.request.form or {})) > 1
+        return len(self.results()) > 1
 
     def header_title(self):
         if self.data.header:
