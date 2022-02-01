@@ -3,6 +3,7 @@ from zope.interface import provider
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+from .utils import title_for_type
 
 
 # Use this EMPTY_MARKER for your custom indexer to index empty criterions.
@@ -26,7 +27,7 @@ GROUPBY_CRITERIA = {
     'Portal Type': {
         'index': 'portal_type',
         'metadata': 'portal_type',
-        'display_modifier': None,
+        'display_modifier': title_for_type,
         'query_range': None,
     }
 }
